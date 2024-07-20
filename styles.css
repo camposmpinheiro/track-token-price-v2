@@ -28,7 +28,7 @@ input#amount, input#boostPack, input#elementsBoost {
     border: 1px solid white; /* Borda branca */
     background-color: #333; /* Fundo cinza escuro */
     color: white; /* Cor do texto */
-    font-size: 16px; /* Tamanho da fonte */
+    font-size: 20px; /* Tamanho da fonte */
     text-align: center; /* Centraliza o texto */
     box-sizing: border-box; /* Garante que o padding não afete a largura */
     outline: none; /* Remove o contorno ao focar */

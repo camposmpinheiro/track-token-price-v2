@@ -50,7 +50,7 @@ async function readTokensAndFetchPrices() {
             // Extrair símbolos necessários para buscar os endereços
             const symbols = data.rewards.map(reward => reward.symbol);
 
-            // Buscar endereços para todos os símbolos
+            // Buscar endereços para todos os símbolos em paralelo
             const tokenAddresses = await Promise.all(symbols.map(symbol => fetchTokenAddress(symbol)));
 
             // Mapear símbolos para endereços
@@ -59,20 +59,28 @@ async function readTokensAndFetchPrices() {
                 return map;
             }, {});
 
-            // Obter preços e atualizar a tabela
-            const prices = [];
-            for (const reward of data.rewards) {
+            // Obter preços para todos os tokens em paralelo
+            const pricesPromises = data.rewards.map(async (reward) => {
                 const address = tokenMap[reward.symbol];
                 if (address) {
                     const price = await fetchPrices(address);
-                    const quantity = reward.amount * ((elementsBoost/100)+1) * ((boostPack/100)+1);
-                    prices.push({
+                    const quantity = reward.amount * ((elementsBoost / 100) + 1) * ((boostPack / 100) + 1);
+                    return {
                         tokenName: reward.symbol,
                         value: price,
-                        amount: quantity
-                    });
+                        amount: quantity,
+                        boosted: reward.boosted // Inclui a flag boosted
+                    };
                 }
-            }
+                return null;
+            });
+
+            // Aguarda todas as promessas de preços serem resolvidas
+            const prices = (await Promise.all(pricesPromises)).filter(price => price !== null);
+
+            // Ordenar os tokens para que os boostados venham primeiro
+            prices.sort((a, b) => b.boosted - a.boosted);
+
             updateTable(prices);
         }
     } catch (error) {
@@ -84,7 +92,7 @@ function updateTable(prices) {
     const tbody = document.querySelector('#pricesTable tbody');
     tbody.innerHTML = ''; // Limpa a tabela antes de atualizar
 
-    prices.forEach(({ tokenName, value, amount }, index) => {
+    prices.forEach(({ tokenName, value, amount, boosted }, index) => {
         const row = document.createElement('tr');
         
         // Coluna do contador
@@ -97,7 +105,16 @@ function updateTable(prices) {
         const quantityCell = document.createElement('td');
         const totalCell = document.createElement('td');
 
-        nameCell.textContent = tokenName;
+        // Adiciona o nome do token e o ícone SVG se o token estiver boostado
+        nameCell.innerHTML = tokenName + " " + (boosted ? 
+            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#21CE99" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' 
+            : '');
+
+        // Aplica a cor verde ao texto se o token estiver boostado
+        if (boosted) {
+            nameCell.style.color = '#21CE99'; // Verde
+        }
+
         valueCell.textContent = value;
         
         const quantityInput = document.createElement('input');
