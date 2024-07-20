@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperSwap Rewards</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Adiciona o favicon -->
+</head>
+<body>
+    <img src="superswap_logo.svg" alt="SuperSwap Logo" id="logo">
+    <br>
+    <br>
+    <br>
+    
+    <div>
+        <div class="identifier-container" >
+            <h2 for="amount" style="padding-left: 90px;">Amount:</label>
+            <input type="number" id="amount">
+        </div>
+        <div class="identifier-container">
+            <h2 for="elementsBoost">Elements Boost:</label>
+            <input type="number" id="elementsBoost">
+        </div>
+        <div class="identifier-container">
+            <h2 for="boostPack" style="padding-left: 50px;">Boost Pack:</label>
+            <input type="number" id="boostPack">
+        </div>
+    </div>
+    <br>
+    <br>
+    
+    <h1 id="totalValue1"></h1>
+    <br>
+    <table id="pricesTable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Ticker</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be added here by JavaScript -->
+        </tbody>
+    </table>
+    <br>
+    <h1 id="totalValue2"></h1>
+
+    <script src="script.js"></script>
+</body>
+</html>
