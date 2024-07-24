@@ -40,7 +40,9 @@ async function readTokensAndFetchPrices() {
         return;
     }
 
-    const apiUrl = `https://corsproxy.io/?https://swap-api.assetdash.com/api/api_v4/swap/v2_quote?network_id=13af0d45-4b0f-4208-9953-c6e33ddc7b42&send_token_address=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&receive_token_address=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB&amount=${amount}&direct_routes_only=false&slippage_bps=10`;
+    const timestamp = Date.now();
+
+    const apiUrl = `https://corsproxy.io/?https://swap-api.assetdash.com/api/api_v4/swap/v2_quote?network_id=13af0d45-4b0f-4208-9953-c6e33ddc7b42&send_token_address=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&receive_token_address=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB&amount=${amount}&direct_routes_only=false&slippage_bps=10&timestamp=${timestamp}`;
     try {
         const response = await fetch(apiUrl);
         const data = await response.json();
