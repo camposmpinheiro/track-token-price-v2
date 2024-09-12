@@ -1,24 +1,112 @@
-body {
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+* {
     margin: 0;
-    background: linear-gradient(to right, #145a16, #7f358b);
+    padding: 0;
+    box-sizing: border-box;
 }
 
-h1, h2, label {
-    color: white;
+body {
+    font-family: Arial, sans-serif;
+    background-color: #000; /* Fundo preto */
+    color: #fff; /* Cor do texto branco para contraste */
+    display: flex;
+    flex-direction: column; /* Alinha os itens verticalmente */
+    align-items: center;
+    min-height: 100vh;
+}
+
+#logo {
+    margin-top: 20px;
 }
 
 .identifier-container {
-    display: contents;
-    align-items: center;
-    gap: 10px;
-    width: 550px; /* Ajuste a largura conforme necessário */
-    max-width: 600px; /* Largura máxima para evitar inputs muito largos */
+    margin: 20px 0; /* Espaçamento entre o input e os outros elementos */
+    text-align: center; /* Centraliza o texto e o input */
+}
+
+#amount {
+    padding: 8px;
+    font-size: 16px;
+    width: 200px;
+}
+
+.loot-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Define 4 colunas de largura igual */
+    gap: 20px; /* Espaçamento entre os cards */
+    padding: 20px;
+    width: 100%; /* Certifique-se de que o container usa toda a largura disponível */
+    max-width: 1200px; /* Defina uma largura máxima se desejar */
+    margin-top: 20px; /* Adiciona um espaço acima do loot-container */
+}
+
+.loot-box {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    color: #000; /* Texto preto para contraste dentro das caixas */
+}
+
+.loot-box:hover {
+    transform: scale(1.05);
+}
+
+.loot-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.loot-details {
+    padding: 15px;
+}
+
+.loot-title {
+    font-size: 1.5em;
     margin-bottom: 10px;
+}
+
+.loot-cost {
+    font-size: 1em;
+    margin-bottom: 15px;
+}
+
+.progress-container {
+    width: 100%;
+    height: 10px;
+    background-color: #e0e0e0;
+    border-radius: 5px;
+    margin-top: 15px;
+    margin-bottom: 15px !important;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 5px;
+    text-align: center;
+    line-height: 10px; /* Alinha o texto verticalmente */
+    color: #fff;
+    font-weight: bold;
+}
+
+.progress-text {
+    margin-top: 5px;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+p {
+    font-family: 'Arial Black', Arial, sans-serif;
+    font-weight: bold;
+}
+
+.profit-positive {
+    color: #28a745; /* Verde para valores positivos */
+}
+
+.profit-negative {
+    color: #dc3545; /* Vermelho para valores negativos */
 }
 
 input#amount, input#boostPack, input#elementsBoost {
@@ -32,50 +120,9 @@ input#amount, input#boostPack, input#elementsBoost {
     text-align: center; /* Centraliza o texto */
     box-sizing: border-box; /* Garante que o padding não afete a largura */
     outline: none; /* Remove o contorno ao focar */
-    width: 150px;
+    width: 250px;
 }
 
 input#amount:focus, input#boostPack:focus, input#elementsBoost:focus {
-    outline: none; /* Remove o contorno */
-}
-
-table {
-    border-collapse: separate;
-    border-spacing: 0;
-    width: 50%;
-    border-radius: 10px;
-    overflow: hidden;
-    font-family: Arial, sans-serif; /* Fonte Arial para a tabela */
-    background-color: #333; /* Fundo da tabela em cinza escuro */
-}
-
-table, th, td {
-    border: 1px solid white; /* Borda branca para a tabela e células */
-}
-
-th, td {
-    padding: 8px 10px; /* Aumentar padding */
-    text-align: center;
-    color: #fff; /* Cor do texto das células */
-    font-size: 20px; /* Aumenta o tamanho da fonte */
-}
-
-th {
-    background-color: #444; /* Fundo dos cabeçalhos da tabela */
-}
-
-td input {
-    width: 100%; /* Input ocupa 100% da célula */
-    box-sizing: border-box; /* Garante que o padding não afete a largura */
-    background: transparent; /* Fundo transparente */
-    border: none; /* Remove borda */
-    font-size: 20px; /* Tamanho da fonte */
-    text-align: center; /* Centraliza o texto */
-    color: #fff; /* Cor do texto */
-    outline: none; /* Remove o contorno ao focar */
-}
-
-/* Opcional: Estilo do input ao focar */
-td input:focus {
     outline: none; /* Remove o contorno */
 }

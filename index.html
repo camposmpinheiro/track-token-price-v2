@@ -1,54 +1,21 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SuperSwap Rewards</title>
+    <title>Loot Boxes</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Adiciona o favicon -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
 </head>
 <body>
     <img src="superswap_logo.svg" alt="SuperSwap Logo" id="logo">
-    <br>
-    <br>
-    <br>
-    
-    <div>
-        <div class="identifier-container" >
-            <h2 for="amount" style="padding-left: 90px;">Amount:</label>
-            <input type="number" id="amount">
-        </div>
-        <div class="identifier-container">
-            <h2 for="elementsBoost">Elements Boost:</label>
-            <input type="number" id="elementsBoost">
-        </div>
-        <div class="identifier-container">
-            <h2 for="boostPack" style="padding-left: 50px;">Boost Pack:</label>
-            <input type="number" id="boostPack">
-        </div>
+    <div class="identifier-container">
+        <h2 for="amount">Gold Value in USD:</h2>
+        <input type="number" id="amount">
+        <button id="printAmountBtn">Print Amount</button>
     </div>
-    <br>
-    <br>
-    
-    <h1 id="totalValue1"></h1>
-    <br>
-    <table id="pricesTable">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Ticker</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Value</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows will be added here by JavaScript -->
-        </tbody>
-    </table>
-    <br>
-    <h1 id="totalValue2"></h1>
-
+    <div class="loot-container" id="loot-container">
+    </div>
     <script src="script.js"></script>
 </body>
 </html>

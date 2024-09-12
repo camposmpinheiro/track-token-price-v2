@@ -1,210 +1,137 @@
-async function fetchTokenAddress(symbol) {
+// Função fetchUserDeals
+async function fetchUserDeals(id) {
     try {
-        const response = await fetch('tokens.txt');
-        const text = await response.text();
-        const tokens = text.split('\n').map(line => line.trim()).filter(line => line);
-
-        for (const token of tokens) {
-            const [tokenSymbol, tokenAddress] = token.split(';');
-            if (tokenSymbol.toUpperCase() === symbol.toUpperCase()) {
-                return tokenAddress;
+        const response = await fetch(`http://camposmpinheiro.pythonanywhere.com/fetch-user-deals/${id}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MTM3OTIwMTU3LCJzdWIiOiI3NWUzNTU3OS0zNTUzLTRlMzktYTVmYi1lM2Q3ZTc4ZWNjODYifQ.BnBIQc77RWhwAMrKWZU7d3pdOP_p_S5ppg87EigR_XQ'
             }
-        }
-        throw new Error(`Token address for symbol ${symbol} not found.`);
+        });
+        const data = await response.json();
+        console.log(`Deals for ID ${id}:`, data);
+        return data.deal; // Retorna o objeto "deal"
     } catch (error) {
-        console.error('Error fetching token addresses:', error);
-        return null;
+        console.error(`Error fetching user deals for ID ${id}:`, error);
+        return null; // Retorna null em caso de erro
     }
 }
 
-async function fetchPrices(tokenAddress) {
-    const url = `https://birdeye-proxy.jup.ag/defi/multi_price?list_address=${tokenAddress},EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v`;
+// Função loadLootBoxes
+async function loadLootBoxes() {
     try {
-        const response = await fetch(url);
+        const response = await fetch('http://camposmpinheiro.pythonanywhere.com/fetch-deals', {
+            method: 'GET',
+            headers: {
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MTM3OTIwMTU3LCJzdWIiOiI3NWUzNTU3OS0zNTUzLTRlMzktYTVmYi1lM2Q3ZTc4ZWNjODYifQ.BnBIQc77RWhwAMrKWZU7d3pdOP_p_S5ppg87EigR_XQ'
+            }
+        });
         const data = await response.json();
-        
-        const value = data.data[tokenAddress]?.value;
-        return value ? parseFloat(value).toFixed(10) : 'Error';
-    } catch (error) {
-        console.error(`Error fetching prices for token ${tokenAddress}:`, error);
-        return 'Error';
-    }
-}
+        const container = document.getElementById('loot-container');
+        container.innerHTML = ''; // Limpa o container antes de adicionar novos elementos
 
-async function readTokensAndFetchPrices() {
-    const amount = document.getElementById('amount').value.trim();
-    const elementsBoost = parseFloat(document.getElementById('elementsBoost').value.trim()) || 0;
-    const boostPack = parseFloat(document.getElementById('boostPack').value.trim()) || 0;
+        // Coleta todas as promessas de fetchUserDeals
+        const fetchPromises = data.deals.map(async (deal) => {
+            // Criar a loot box e adicioná-la ao container
+            const lootBox = document.createElement('div');
+            lootBox.classList.add('loot-box');
 
-    if (!amount) {
-        return;
-    }
+            const progressPercentage = (deal.percent_prizes_claimed).toFixed(1);
+            let progressColor;
 
-    const timestamp = Date.now();
+            if (progressPercentage < 40) {
+                progressColor = '#28a745'; // Verde
+            } else if (progressPercentage < 100) {
+                progressColor = '#fd7e14'; // Laranja
+            } else {
+                progressColor = '#dc3545'; // Vermelho
+            }
 
-    const apiUrl = `https://corsproxy.io/?https://swap-api.assetdash.com/api/api_v4/swap/v2_quote?network_id=13af0d45-4b0f-4208-9953-c6e33ddc7b42&send_token_address=EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v&receive_token_address=Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB&amount=${amount}&direct_routes_only=false&slippage_bps=10&timestamp=${timestamp}`;
-    try {
-        const response = await fetch(apiUrl);
-        const data = await response.json();
+            lootBox.innerHTML = `
+                <img class="loot-image" src="${deal.image_url}" alt="${deal.title}">
+                <div class="loot-details">
+                    <h2 class="loot-title">${deal.title}</h2>
+                    <p class="loot-cost">Cost: ${deal.cost_gold} Gold</p>
+                    <div class="progress-container">
+                        <div class="progress-bar" style="width: ${progressPercentage}%; background-color: ${progressColor};"></div>
+                    </div>
+                    <p class="progress-text">${progressPercentage}% claimed</p>
+                    <p class="loot-cost" style="margin-top:15px" id="first-p-${deal.id}">Loading...</p>
+                    <p class="loot-cost" id="second-p-${deal.id}">Loading...</p>
+                    <p class="loot-cost" id="profit-${deal.id}"></p>
+                </div>
+            `;
 
-        if (data.rewards && Array.isArray(data.rewards)) {
+            container.appendChild(lootBox);
 
-            // Extrair símbolos necessários para buscar os endereços
-            const symbols = data.rewards.map(reward => reward.symbol);
+            // Fetch user deals for the current deal id and atualizar a data criada
+            let profit = 0;
+            const userDeal = await fetchUserDeals(deal.id);
+            if (userDeal && userDeal.loot_box_asset_quantity_low && userDeal.loot_box_asset.price_usd) {
+                profit = ((userDeal.loot_box_asset_quantity_low * userDeal.loot_box_asset.price_usd) - (2.45 * userDeal.cost_gold)).toFixed(2);
+                document.getElementById(`first-p-${deal.id}`).textContent = 
+                `Min: ${userDeal.loot_box_asset_quantity_low} ($ ${(userDeal.loot_box_asset_quantity_low * userDeal.loot_box_asset.price_usd).toFixed(2)})`;
+            } 
+            else if (userDeal && userDeal.asset_quantity && userDeal.asset && userDeal.asset.price_usd) {
+                profit = ((userDeal.asset_quantity * userDeal.asset.price_usd) - (2.45 * userDeal.cost_gold)).toFixed(2);
+                document.getElementById(`first-p-${deal.id}`).textContent = 
+                `Est Value: ${userDeal.asset_quantity} ($ ${(userDeal.asset_quantity * userDeal.asset.price_usd).toFixed(2)})`;
+            } else {
+                document.getElementById(`first-p-${deal.id}`).textContent = "";
+            }
 
-            // Buscar endereços para todos os símbolos em paralelo
-            const tokenAddresses = await Promise.all(symbols.map(symbol => fetchTokenAddress(symbol)));
+            if (userDeal && userDeal.loot_box_asset_quantity_high && userDeal.loot_box_asset.price_usd) {
+                document.getElementById(`second-p-${deal.id}`).textContent = 
+                `Max: ${userDeal.loot_box_asset_quantity_high} ($ ${(userDeal.loot_box_asset_quantity_high * userDeal.loot_box_asset.price_usd).toFixed(2)})`;
+            } else {
+                document.getElementById(`second-p-${deal.id}`).textContent = "";
+            }
 
-            // Mapear símbolos para endereços
-            const tokenMap = symbols.reduce((map, symbol, index) => {
-                map[symbol] = tokenAddresses[index];
-                return map;
-            }, {});
-
-            // Obter preços para todos os tokens em paralelo
-            const pricesPromises = data.rewards.map(async (reward) => {
-                const address = tokenMap[reward.symbol];
-                if (address) {
-                    const price = await fetchPrices(address);
-                    const quantity = reward.amount * ((elementsBoost / 100) + 1) * ((boostPack / 100) + 1);
-                    return {
-                        tokenName: reward.symbol,
-                        value: price,
-                        amount: quantity,
-                        boosted: reward.boosted // Inclui a flag boosted
-                    };
+            if (profit) {
+                const profitElement = document.getElementById(`profit-${deal.id}`);
+                profitElement.textContent = ` Min Profit: $ ${profit}`;
+                
+                // Definir a classe com base no valor do lucro
+                if (parseFloat(profit) > 0) {
+                    profitElement.classList.add('profit-positive');
+                    profitElement.classList.remove('profit-negative');
+                } else if (parseFloat(profit) < 0) {
+                    profitElement.classList.add('profit-negative');
+                    profitElement.classList.remove('profit-positive');
+                } else {
+                    profitElement.classList.remove('profit-positive', 'profit-negative');
                 }
-                return null;
-            });
-
-            // Aguarda todas as promessas de preços serem resolvidas
-            const prices = (await Promise.all(pricesPromises)).filter(price => price !== null);
-
-            // Ordenar os tokens para que os boostados venham primeiro
-            prices.sort((a, b) => b.boosted - a.boosted);
-
-            updateTable(prices);
-        }
-    } catch (error) {
-        console.error('Error fetching API data:', error);
-    }
-}
-
-function updateTable(prices) {
-    const tbody = document.querySelector('#pricesTable tbody');
-    tbody.innerHTML = ''; // Limpa a tabela antes de atualizar
-
-    prices.forEach(({ tokenName, value, amount, boosted }, index) => {
-        const row = document.createElement('tr');
-        
-        // Coluna do contador
-        const indexCell = document.createElement('td');
-        indexCell.textContent = index + 1; // Começa de 1
-        row.appendChild(indexCell);
-
-        const nameCell = document.createElement('td');
-        const valueCell = document.createElement('td');
-        const quantityCell = document.createElement('td');
-        const totalCell = document.createElement('td');
-
-        // Adiciona o nome do token e o ícone SVG se o token estiver boostado
-        nameCell.innerHTML = tokenName + " " + (boosted ? 
-            '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="#21CE99" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>' 
-            : '');
-
-        // Aplica a cor verde ao texto se o token estiver boostado
-        if (boosted) {
-            nameCell.style.color = '#21CE99'; // Verde
-        }
-
-        valueCell.textContent = value;
-        
-        const quantityInput = document.createElement('input');
-        quantityInput.type = 'number';
-        quantityInput.step = '0.01';
-        quantityInput.min = '0';
-        quantityInput.value = amount;
-        
-        quantityInput.addEventListener('input', () => {
-            updateTotal(row, value);
+            } else {
+                document.getElementById(`profit-${deal.id}`).textContent = "";
+            }
+            
+            return {
+                id: deal.id,
+                profit: parseFloat(profit) || 0, // Adiciona o lucro para ordenação
+                element: lootBox
+            };
         });
 
-        quantityCell.appendChild(quantityInput);
-        row.appendChild(indexCell);
-        row.appendChild(nameCell);
-        row.appendChild(valueCell);
-        row.appendChild(quantityCell);
-        row.appendChild(totalCell);
-        
-        tbody.appendChild(row);
+        // Aguarda todas as promessas de fetchUserDeals serem concluídas
+        const dealsWithProfit = await Promise.all(fetchPromises);
 
-        updateTotal(row, value);
-    });
+        // Ordena os loot boxes por profit
+        const sortedDeals = dealsWithProfit
+            .filter(deal => deal) // Remove qualquer valor nulo ou indefinido
+            .sort((a, b) => b.profit - a.profit); // Ordena do maior para o menor profit
 
-    updateTotalValue();
+        // Recria os elementos de loot box com a ordem correta
+        container.innerHTML = '';
+        sortedDeals.forEach(deal => {
+            container.appendChild(deal.element);
+        });
+    } catch (error) {
+        console.error('Erro:', error);
+    }
 }
 
-function updateTotal(row, price) {
-    const quantityInput = row.cells[3].querySelector('input');
-    const totalCell = row.cells[4];
 
-    const quantity = parseFloat(quantityInput.value) || 0;
-    const priceValue = parseFloat(price) || 0;
 
-    totalCell.textContent = (quantity * priceValue).toFixed(3);
-    updateTotalValue();
-}
-
-function updateTotalValue() {
-    const tbody = document.querySelector('#pricesTable tbody');
-    let totalValue = 0;
-
-    Array.from(tbody.rows).forEach(row => {
-        const totalCell = row.cells[4];
-        const value = parseFloat(totalCell.textContent) || 0;
-        totalValue += value;
-    });
-    totalValue = totalValue * 2;
-
-    const totalElement1 = document.getElementById('totalValue1');
-    totalElement1.textContent = `Total Value: ${totalValue.toFixed(2)}`;
-
-    const totalElement2 = document.getElementById('totalValue2');
-    totalElement2.textContent = `Total Value: ${totalValue.toFixed(2)}`;
-}
-
-function saveAmount() {
-    const amountInput = document.getElementById('amount');
-    const amount = amountInput.value.trim();
-    localStorage.setItem('amount', amount);
-}
-
-function saveElementsBoost() {
-    const elementsBoostInput = document.getElementById('elementsBoost');
-    const elementsBoost = elementsBoostInput.value.trim();
-    localStorage.setItem('elementsBoost', elementsBoost);
-}
-
-function saveBoostPack() {
-    const boostPackInput = document.getElementById('boostPack');
-    const boostPack = boostPackInput.value.trim();
-    localStorage.setItem('boostPack', boostPack);
-}
-
-function loadAmount() {
-    const amount = localStorage.getItem('amount') || '';
-    document.getElementById('amount').value = amount;
-}
-
-function loadElementsBoost() {
-    const elementsBoost = localStorage.getItem('elementsBoost') || '';
-    document.getElementById('elementsBoost').value = elementsBoost;
-}
-
-function loadBoostPack() {
-    const boostPack = localStorage.getItem('boostPack') || '';
-    document.getElementById('boostPack').value = boostPack;
-}
+window.onload = loadLootBoxes;
 
 document.getElementById('amount').addEventListener('input', saveAmount);
 document.getElementById('elementsBoost').addEventListener('input', saveElementsBoost);
@@ -212,6 +139,8 @@ document.getElementById('boostPack').addEventListener('input', saveBoostPack);
 
 setInterval(readTokensAndFetchPrices, 30000);
 document.addEventListener('DOMContentLoaded', () => {
+    const printAmountBtn = document.getElementById('printAmountBtn');
+    printAmountBtn.addEventListener('click', printAmount);
     loadAmount();
     loadElementsBoost();
     loadBoostPack();

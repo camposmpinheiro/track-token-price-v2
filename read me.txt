@@ -1,1 +1,3 @@
-python -m http.server 8000 para rodar o projeto no vsCode
+para rodar o projeto no vsCode:
+
+python -m http.server 8000
