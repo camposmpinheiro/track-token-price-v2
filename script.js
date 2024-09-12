@@ -1,7 +1,7 @@
 // Função fetchUserDeals
 async function fetchUserDeals(id) {
     try {
-        const response = await fetch(`http://camposmpinheiro.pythonanywhere.com/fetch-user-deals/${id}`, {
+        const response = await fetch(`https://camposmpinheiro.pythonanywhere.com/fetch-user-deals/${id}`, {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MTM3OTIwMTU3LCJzdWIiOiI3NWUzNTU3OS0zNTUzLTRlMzktYTVmYi1lM2Q3ZTc4ZWNjODYifQ.BnBIQc77RWhwAMrKWZU7d3pdOP_p_S5ppg87EigR_XQ'
@@ -19,7 +19,7 @@ async function fetchUserDeals(id) {
 // Função loadLootBoxes
 async function loadLootBoxes() {
     try {
-        const response = await fetch('http://camposmpinheiro.pythonanywhere.com/fetch-deals', {
+        const response = await fetch('https://camposmpinheiro.pythonanywhere.com/fetch-deals', {
             method: 'GET',
             headers: {
                 'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MTM3OTIwMTU3LCJzdWIiOiI3NWUzNTU3OS0zNTUzLTRlMzktYTVmYi1lM2Q3ZTc4ZWNjODYifQ.BnBIQc77RWhwAMrKWZU7d3pdOP_p_S5ppg87EigR_XQ'
