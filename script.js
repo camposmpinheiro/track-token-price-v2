@@ -67,12 +67,12 @@ async function loadLootBoxes() {
             let profit = 0;
             const userDeal = await fetchUserDeals(deal.id);
             if (userDeal && userDeal.loot_box_asset_quantity_low && userDeal.loot_box_asset.price_usd) {
-                profit = ((userDeal.loot_box_asset_quantity_low * userDeal.loot_box_asset.price_usd) - (2.45 * userDeal.cost_gold)).toFixed(2);
+                profit = ((userDeal.loot_box_asset_quantity_low * userDeal.loot_box_asset.price_usd) - (2.5 * userDeal.cost_gold)).toFixed(2);
                 document.getElementById(`first-p-${deal.id}`).textContent = 
                 `Min: ${userDeal.loot_box_asset_quantity_low} ($ ${(userDeal.loot_box_asset_quantity_low * userDeal.loot_box_asset.price_usd).toFixed(2)})`;
             } 
             else if (userDeal && userDeal.asset_quantity && userDeal.asset && userDeal.asset.price_usd) {
-                profit = ((userDeal.asset_quantity * userDeal.asset.price_usd) - (2.45 * userDeal.cost_gold)).toFixed(2);
+                profit = ((userDeal.asset_quantity * userDeal.asset.price_usd) - (2.5 * userDeal.cost_gold)).toFixed(2);
                 document.getElementById(`first-p-${deal.id}`).textContent = 
                 `Est Value: ${userDeal.asset_quantity} ($ ${(userDeal.asset_quantity * userDeal.asset.price_usd).toFixed(2)})`;
             } else {
