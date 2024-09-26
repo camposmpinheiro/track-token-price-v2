@@ -45,23 +45,33 @@ async function loadLootBoxes() {
             } else {
                 progressColor = '#dc3545'; // Vermelho
             }
-
             lootBox.innerHTML = `
-                <img class="loot-image" src="${deal.image_url}" alt="${deal.title}">
-                <div class="loot-details">
-                    <h2 class="loot-title">${deal.title}</h2>
-                    <p class="loot-cost">Cost: ${deal.cost_gold} Gold</p>
-                    <div class="progress-container">
-                        <div class="progress-bar" style="width: ${progressPercentage}%; background-color: ${progressColor};"></div>
-                    </div>
-                    <p class="progress-text">${progressPercentage}% claimed</p>
-                    <p class="loot-cost" style="margin-top:15px" id="first-p-${deal.id}">Loading...</p>
-                    <p class="loot-cost" id="second-p-${deal.id}">Loading...</p>
-                    <p class="loot-cost" id="profit-${deal.id}"></p>
+            <img class="loot-image" src="${deal.image_url}" alt="${deal.title}">
+            <div class="loot-details">
+                <h2 class="loot-title">
+                    ${deal.title}
+                    <button class="copy-btn" id="copy-btn-${deal.id}" style="background: none; border: none; cursor: pointer;">
+                        <!-- Ícone SVG de copiar -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+                            <path d="M10 1.5v1h2a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1v-11a1 1 0 0 1 1-1h2v-1a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5zM4 2v1h8V2H4zm0 2v10h8V4H4zm2 1h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1 0-1z"/>
+                        </svg>
+                    </button>
+                </h2>
+                <p class="loot-cost">Cost: ${deal.cost_gold} Gold</p>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width: ${progressPercentage}%; background-color: ${progressColor};"></div>
                 </div>
-            `;
+                <p class="progress-text">${progressPercentage}% claimed</p>
+                <p class="loot-cost" style="margin-top:15px" id="first-p-${deal.id}">Loading...</p>
+                <p class="loot-cost" id="second-p-${deal.id}">Loading...</p>
+                <p class="loot-cost" id="profit-${deal.id}"></p>
+            </div>
+        `;
 
             container.appendChild(lootBox);
+            document.getElementById(`copy-btn-${deal.id}`).addEventListener('click', function() {
+                copyToClipboard(deal.id);
+            });
 
             // Fetch user deals for the current deal id and atualizar a data criada
             let profit = 0;
@@ -110,6 +120,13 @@ async function loadLootBoxes() {
                 element: lootBox
             };
         });
+
+        function copyToClipboard(id) {
+            navigator.clipboard.writeText("https://mobile-api.assetdash.com/api/api_v5/market/deals/user_deals/"+id+"/purchase_deal").then(function() {
+            }, function(err) {
+                console.error('Falha ao copiar o texto: ', err);
+            });
+        }
 
         // Aguarda todas as promessas de fetchUserDeals serem concluídas
         const dealsWithProfit = await Promise.all(fetchPromises);
