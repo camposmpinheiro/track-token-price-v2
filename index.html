@@ -6,13 +6,17 @@
     <title>Loot Boxes</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
 </head>
 <body>
     <img src="superswap_logo.svg" alt="SuperSwap Logo" id="logo">
     <div class="identifier-container">
         <h2 for="amount">Gold Value in USD:</h2>
         <input type="number" id="amount">
-        <button id="printAmountBtn">Print Amount</button>
+        <label>
+            <input type="checkbox" id="ignoreFinished"> Ignore Finished
+        </label>
+        <button id="printAmountBtn">Calculate</button>
     </div>
     <div class="loot-container" id="loot-container">
     </div>

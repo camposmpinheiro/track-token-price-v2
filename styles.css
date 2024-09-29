@@ -19,15 +19,54 @@ body {
 }
 
 .identifier-container {
-    margin: 20px 0; /* Espaçamento entre o input e os outros elementos */
-    text-align: center; /* Centraliza o texto e o input */
+    display: flex;
+    flex-direction: column; /* Coloca os elementos em uma coluna */
+    align-items: center; /* Centraliza horizontalmente */
+    justify-content: center; /* Centraliza verticalmente */
+    margin-top: 50px; /* Adiciona espaçamento no topo */
 }
 
-#amount {
-    padding: 8px;
-    font-size: 16px;
-    width: 200px;
+.identifier-container h2 {
+    margin-bottom: 15px; /* Espaçamento entre o título e o input */
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
 }
+
+.identifier-container input[type="number"] {
+    padding: 10px;
+    width: 200px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.identifier-container label {
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+
+#ignoreFinished {
+    margin-right: 10px;
+}
+
+#printAmountBtn {
+    padding: 10px 20px;
+    font-size: 18px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#printAmountBtn:hover {
+    background-color: #0056b3;
+}
+
 
 .loot-container {
     display: grid;
@@ -120,7 +159,7 @@ input#amount, input#boostPack, input#elementsBoost {
     text-align: center; /* Centraliza o texto */
     box-sizing: border-box; /* Garante que o padding não afete a largura */
     outline: none; /* Remove o contorno ao focar */
-    width: 250px;
+    width: 150px;
 }
 
 input#amount:focus, input#boostPack:focus, input#elementsBoost:focus {
