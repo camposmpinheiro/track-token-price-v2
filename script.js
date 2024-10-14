@@ -4,7 +4,7 @@ async function fetchUserDeals(id) {
         const response = await fetch(`https://camposmpinheiro.pythonanywhere.com/fetch-user-deals/${id}`, {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MTM3OTIwMTU3LCJzdWIiOiI3NWUzNTU3OS0zNTUzLTRlMzktYTVmYi1lM2Q3ZTc4ZWNjODYifQ.BnBIQc77RWhwAMrKWZU7d3pdOP_p_S5ppg87EigR_XQ'
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MTQwNzQwMzA4LCJzdWIiOiI1MjkxMDA1Yi1iNGRiLTQ3OGYtYjM3Ny0zZjQ5YTZhYmQ2ZTQifQ.83RbwPsYmpqb5TeEVyhqQ7FdPD9pFqgEiX3aOQ3SopI'
             }
         });
         const data = await response.json();
@@ -21,7 +21,7 @@ async function loadLootBoxes(amount,ignoreFinished) {
         const response = await fetch('https://camposmpinheiro.pythonanywhere.com/fetch-deals', {
             method: 'GET',
             headers: {
-                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MTM3OTIwMTU3LCJzdWIiOiI3NWUzNTU3OS0zNTUzLTRlMzktYTVmYi1lM2Q3ZTc4ZWNjODYifQ.BnBIQc77RWhwAMrKWZU7d3pdOP_p_S5ppg87EigR_XQ'
+                'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjQ3MTQwNzQwMzA4LCJzdWIiOiI1MjkxMDA1Yi1iNGRiLTQ3OGYtYjM3Ny0zZjQ5YTZhYmQ2ZTQifQ.83RbwPsYmpqb5TeEVyhqQ7FdPD9pFqgEiX3aOQ3SopI'
             }
         });
         const data = await response.json();
